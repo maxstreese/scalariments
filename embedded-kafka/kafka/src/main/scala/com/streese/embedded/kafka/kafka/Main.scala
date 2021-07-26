@@ -5,10 +5,17 @@ import io.github.embeddedkafka.schemaregistry.EmbeddedKafkaConfig
 
 object Main extends App with EmbeddedKafka {
 
-  implicit val config = EmbeddedKafkaConfig(
-    kafkaPort          = 9092,
-    zooKeeperPort      = 2821,
-    schemaRegistryPort = 8080
+  val config = Config()
+
+  implicit val kafkaConfig = EmbeddedKafkaConfig(
+    kafkaPort              = config.kafkaPort,
+    zooKeeperPort          = config.zooKeeperPort,
+    schemaRegistryPort     = config.schemaRegistryPort,
+    customBrokerProperties = Map(
+      "listeners"                      -> config.kafkaListeners,
+      "advertised.listeners"           -> config.kafkaAdvertisedListeners,
+      "listener.security.protocol.map" -> config.kafkaListenerSecurityProtocolMap
+    )
   )
 
   val server = EmbeddedKafka.start()
