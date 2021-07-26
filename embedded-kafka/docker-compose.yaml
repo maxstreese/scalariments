@@ -15,12 +15,14 @@ services:
       KAFKA_ZOO_KEEPER_PORT: 2181
       KAFKA_SCHEMA_REGISTRY_PORT: 8081
       KAFKA_KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092'
-      KAFKA_KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
       KAFKA_KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
   producer:
     image: 'embedded-kafka-producer:0.1.0-SNAPSHOT'
     hostname: 'producer'
     container_name: 'producer'
+    depends_on:
+      - 'kafka'
     environment:
       PRODUCER_SCHEMA_REGISTRY_URI: 'http://kafka:8081'
       PRODUCER_KAFKA_BOOTSTRAP_URI: 'kafka:29092'
