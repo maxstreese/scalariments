@@ -7,7 +7,6 @@ import akka.management.scaladsl.AkkaManagement
 import org.slf4j.LoggerFactory
 import scala.util.control.NonFatal
 
-import akka.actor.CoordinatedShutdown
 import shopping.cart.repository.ItemPopularityRepositoryImpl
 import shopping.cart.repository.ScalikeJdbcSetup
 
@@ -32,7 +31,7 @@ object Main {
   }
 
   def init(system: ActorSystem[_], orderService: ShoppingOrderService): Unit = {
-    
+
     ScalikeJdbcSetup.init(system)
 
     AkkaManagement(system).start()
@@ -45,9 +44,8 @@ object Main {
 
     PublishEventsProjection.init(system)
 
-    
-    SendOrderProjection.init(system, orderService) 
-    
+    SendOrderProjection.init(system, orderService)
+
 
     val grpcInterface =
       system.settings.config.getString("shopping-cart-service.grpc.interface")
@@ -56,10 +54,10 @@ object Main {
     val grpcService =
       new ShoppingCartServiceImpl(system, itemPopularityRepository)
     ShoppingCartServer.start(grpcInterface, grpcPort, system, grpcService)
-    
+
   }
 
-  protected def orderServiceClient( 
+  protected def orderServiceClient(
       system: ActorSystem[_]): ShoppingOrderService = {
     val orderServiceClientSettings =
       GrpcClientSettings
@@ -69,6 +67,5 @@ object Main {
         .withTls(false)
     ShoppingOrderServiceClient(orderServiceClientSettings)(system)
   }
-  
 
 }
